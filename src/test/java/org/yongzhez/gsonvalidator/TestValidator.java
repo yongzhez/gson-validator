@@ -69,8 +69,20 @@ public class TestValidator extends TestCase{
 
     }
 
-    public void testAdditionalItems(){
+    public void testmultipleOf(){
         Path path = Paths.get("multipleOf.json");
+        this.testHelper(path.toAbsolutePath().toString());
+
+    }
+
+    public void testMaximum(){
+        Path path = Paths.get("maximum.json");
+        this.testHelper(path.toAbsolutePath().toString());
+
+    }
+
+    public void testMinimum(){
+        Path path = Paths.get("minimum.json");
         this.testHelper(path.toAbsolutePath().toString());
 
     }

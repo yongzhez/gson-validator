@@ -1,6 +1,5 @@
 package org.yongzhez.gsonvalidator;
 
-import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
@@ -17,19 +16,20 @@ public class Validator {
 
     /**
      * Takes in a jsonElement to be validated, and the schema that it validates
-     * @param schema
-     * @return
+     * which contains exclusiveMaximum, maximum, multipleOf, minimum or exclusiveMinimum
+     * @param schema a schema containing the above mentioned keywords
+     * @param number a jsonElement to be validated ( doesn't have to be number )
+     * @return true if Json adheres to schema, false otherwise
      */
-    public boolean validateNumber(JsonElement jsonElement, JsonObject schema){
+    public boolean validateNumber(JsonElement number, JsonObject schema){
 
         boolean valid = true;
-
-        //adheres to section 5.1.1 of Json schema validation for multiple of
-        if (schema.has("multipleOf")){
-            if (jsonElement.isJsonPrimitive()){
-                //if jsonElement is a primitve, check if it is a number, if it's a string, ignore it
-                JsonPrimitive element = jsonElement.getAsJsonPrimitive();
-                if (element.isNumber()){
+        //if jsonElement is a primitve, check if it is a number, if it's a string, ignore it
+        if (number.isJsonPrimitive()){
+            JsonPrimitive element = number.getAsJsonPrimitive();
+            if (element.isNumber()){
+                //adheres to section 5.1.1 of Json schema validation for multiple of
+                if (schema.has("multipleOf")){
                     //check if either number is below 1, if so, multiply both numbers by
                     //10 until both are above 1
                     Double json = element.getAsDouble();
@@ -52,13 +52,29 @@ public class Validator {
                         valid = false;
                     }
                 }
-            }else{
-                valid = false;
+                //adheres to section 5.1.2 of Json schema validation for max and exclusive max
+                if (schema.has("maximum") || schema.has("exclusiveMaximum")){
+                    Double json = element.getAsDouble();
+                    Double validate = schema.get("maximum").getAsDouble();
+                    if (json > validate){
+                        valid = false;
+                    }
+                    if (schema.has("exclusiveMaximum") && json.equals(validate)){
+                        valid = false;
+                    }
+                }
+                //adheres to section 5.1.3 of Json schema validation for min and exclusive min
+                if (schema.has("minimum") || schema.has("exclusiveMinimum")){
+                    Double json = element.getAsDouble();
+                    Double validate = schema.get("minimum").getAsDouble();
+                    if (json < validate){
+                        valid = false;
+                    }
+                    if (schema.has("exclusiveMinimum") && json.equals(validate)){
+                        valid = false;
+                    }
+                }
             }
-        }
-
-        if (schema.has("maximum") || schema.has("exclusiveMaximum")){
-
         }
 
         return valid;
@@ -105,9 +121,11 @@ public class Validator {
 //
 //
 //            }
-            if (schema.has("multipleOf")){
+            if (schema.has("multipleOf") || schema.has("maximum") || schema.has("exclusiveMaximum") ||
+                    schema.has("minimum") || schema.has("exclusiveMinimum")){
                 valid = this.validateNumber(json, schema);
             }
+
 
             return valid;
         }catch (JSONException exception){
