@@ -86,4 +86,16 @@ public class TestValidator extends TestCase{
         this.testHelper(path.toAbsolutePath().toString());
 
     }
+
+    public void testMaxLength(){
+        Path path = Paths.get("maxLength.json");
+        this.testHelper(path.toAbsolutePath().toString());
+
+    }
+
+    public void testMinLength(){
+        Path path = Paths.get("minLength.json");
+        this.testHelper(path.toAbsolutePath().toString());
+
+    }
 }

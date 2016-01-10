@@ -80,6 +80,34 @@ public class Validator {
         return valid;
     }
 
+    public boolean validateString(JsonElement string, JsonObject schema){
+        boolean valid = true;
+
+        if (string.isJsonPrimitive()){
+            JsonPrimitive element = string.getAsJsonPrimitive();
+            if (element.isString()){
+                //adheres to section 5.2.1 of Json schema validation for maxLength
+                if (schema.has("maxLength")){
+                    String json = element.getAsString();
+                    Integer validate = schema.get("maxLength").getAsInt();
+                    if (json.length() > validate){
+                        valid = false;
+                    }
+                }
+                //adheres to section 5.2.2 of Json schema validation for minLength
+                if (schema.has("minLength")){
+                    String json = element.getAsString();
+                    Integer validate = schema.get("minLength").getAsInt();
+                    if (json.length() < validate){
+                        valid = false;
+                    }
+                }
+            }
+        }
+
+        return valid;
+    }
+
     /**
      * takes in a json and a schema and checks if json corresponds to schema
      * @param json a JSONObject
@@ -92,7 +120,7 @@ public class Validator {
         boolean valid = false;
 
         try{
-//            //get the properties field of a json schema
+            //            //get the properties field of a json schema
 //            JsonObject properties = schema.get("properties").getAsJsonObject();
 //            //iterate through all of the property fields checking for their types
 //            for (Map.Entry<String, JsonElement> entry : properties.entrySet()) {
@@ -124,6 +152,9 @@ public class Validator {
             if (schema.has("multipleOf") || schema.has("maximum") || schema.has("exclusiveMaximum") ||
                     schema.has("minimum") || schema.has("exclusiveMinimum")){
                 valid = this.validateNumber(json, schema);
+            }
+            if (schema.has("maxLength") || schema.has("minLength")){
+                valid = this.validateString(json, schema);
             }
 
 
