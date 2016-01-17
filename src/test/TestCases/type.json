@@ -1,4 +1,4 @@
-[
+        [
     {
         "description": "integer type matches integers",
         "schema": {"type": "integer"},

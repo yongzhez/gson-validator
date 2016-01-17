@@ -98,4 +98,15 @@ public class TestValidator extends TestCase{
         this.testHelper(path.toAbsolutePath().toString());
 
     }
+
+    public void testType(){
+        Path path = Paths.get("type.json");
+        this.testHelper(path.toAbsolutePath().toString());
+
+    }
+    public void testEnum(){
+        Path path = Paths.get("enum.json");
+        this.testHelper(path.toAbsolutePath().toString());
+
+    }
 }

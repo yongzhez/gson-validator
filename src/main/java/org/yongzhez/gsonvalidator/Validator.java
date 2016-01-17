@@ -1,10 +1,14 @@
 package org.yongzhez.gsonvalidator;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import org.json.JSONException;
+import org.json.JSONString;
 
+import java.util.Map;
+import java.util.Set;
 
 
 /**
@@ -80,6 +84,13 @@ public class Validator {
         return valid;
     }
 
+    /**
+     *Takes in a jsonElement to be validated, and the schema that it validates
+     * which contains maxLength, minLength, and pattern
+     * @param schema a schema containing the above mentioned keywords
+     * @param string a jsonElement to be validated ( doesn't have to be string )
+     * @return true if Json adheres to schema, false otherwise
+     */
     public boolean validateString(JsonElement string, JsonObject schema){
         boolean valid = true;
 
@@ -105,6 +116,133 @@ public class Validator {
             }
         }
 
+        return valid;
+    }
+
+    public boolean validateArray(JsonElement array, JsonObject schema){
+        boolean valid = true;
+
+        if (array.isJsonArray()){
+            JsonArray elements = array.getAsJsonArray();
+            if (schema.has("items")){
+                if (schema.get("items").isJsonArray()){
+
+                }
+                if (schema.get("items").isJsonObject()){
+                    for (JsonElement element: elements){
+
+                    }
+                }
+            }
+
+        }
+
+        return valid;
+    }
+
+    public boolean typeValidateHelper(String type, JsonElement json, boolean valid){
+
+        switch(type){
+            case "integer": case "number":
+                if (json.isJsonPrimitive()) {
+                    JsonPrimitive element = json.getAsJsonPrimitive();
+                    if (element.isNumber()) {
+                        if (element.getAsNumber().intValue() % element.getAsNumber().doubleValue() != 0 &&
+                                type.equals("integer")) {
+                            valid = false;
+                        }
+                    }else{
+                        valid = false;
+                    }
+                }else{
+                    valid = false;
+                }
+                break;
+            case "string":
+                if (json.isJsonPrimitive()){
+                    JsonPrimitive element = json.getAsJsonPrimitive();
+                    if (!(element.isString())){
+                        valid = false;
+                    }
+                }else{
+                    valid = false;
+                }
+                break;
+            case "object":
+                if (!(json.isJsonObject())){
+                    valid = false;
+                }
+                break;
+            case "boolean":
+                if (json.isJsonPrimitive()){
+                    JsonPrimitive element = json.getAsJsonPrimitive();
+                    if (!(element.isBoolean())){
+                        valid = false;
+                    }
+                }else{
+                    valid = false;
+                }
+                break;
+            case "array":
+                if (!(json.isJsonArray())){
+                    valid = false;
+                }
+                break;
+            case "null":
+                if (!(json.isJsonNull())){
+                    valid = false;
+                }
+                break;
+        }
+        return valid;
+    }
+
+    public boolean validateGeneric(JsonElement json, JsonObject schema){
+        boolean valid = true;
+
+        if (schema.has("type")){
+            if (schema.get("type").isJsonArray()){
+                JsonArray array = schema.get("type").getAsJsonArray();
+                //testing for an array of types.
+                for (int i = 0; i < array.size(); i ++){
+                    String type = array.get(i).getAsJsonPrimitive().getAsString();
+                    valid = this.typeValidateHelper(type, json, valid);
+                    //if even one of the types in the array are met, we return true
+                    //after every iteration check on an element in the type array,
+                    // we reset the validation to true for the next iteration
+                    if (valid){
+                        return true;
+                    }else{
+                        valid = true;
+                    }
+                }
+                return false;
+            }else{
+                valid = this.typeValidateHelper(schema.get("type").getAsString(), json, valid);
+            }
+        }
+
+        if (schema.has("enum")){
+            outerloop:
+            for (JsonElement field : schema.get("enum").getAsJsonArray()) {
+                //first check if the json is an object, if so then evaluate accordingly
+                if (field.equals(json)) {
+                    valid = true;
+                    break outerloop;
+                } else {
+                    if (json.isJsonObject() && field.isJsonObject()) {
+                        for (Map.Entry<String, JsonElement> entry : json.getAsJsonObject().entrySet()) {
+                            for (Map.Entry<String, JsonElement> schemaEntry : schema.getAsJsonObject().entrySet()) {
+                                if (!(entry.getKey().equals(schemaEntry.getKey()) && entry.getValue().equals(schemaEntry.getValue()))) {
+                                    valid = false;
+                                }
+                            }
+                        }
+                    }
+                    valid = false;
+                }
+            }
+        }
         return valid;
     }
 
@@ -149,12 +287,18 @@ public class Validator {
 //
 //
 //            }
+            if (schema.has("type") || schema.has("enum")){
+                valid = this.validateGeneric(json, schema);
+            }
             if (schema.has("multipleOf") || schema.has("maximum") || schema.has("exclusiveMaximum") ||
                     schema.has("minimum") || schema.has("exclusiveMinimum")){
                 valid = this.validateNumber(json, schema);
             }
             if (schema.has("maxLength") || schema.has("minLength")){
                 valid = this.validateString(json, schema);
+            }
+            if (schema.has("additionalItems") || schema.has("items")){
+                valid = this.validateArray(json,schema);
             }
 
 
