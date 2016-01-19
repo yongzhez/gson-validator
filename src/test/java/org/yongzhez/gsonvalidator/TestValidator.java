@@ -69,44 +69,76 @@ public class TestValidator extends TestCase{
 
     }
 
-    public void testmultipleOf(){
+    public void testNumeric(){
         Path path = Paths.get("multipleOf.json");
         this.testHelper(path.toAbsolutePath().toString());
 
-    }
-
-    public void testMaximum(){
-        Path path = Paths.get("maximum.json");
+        path = Paths.get("maximum.json");
         this.testHelper(path.toAbsolutePath().toString());
 
-    }
-
-    public void testMinimum(){
-        Path path = Paths.get("minimum.json");
+        path = Paths.get("minimum.json");
         this.testHelper(path.toAbsolutePath().toString());
-
     }
 
-    public void testMaxLength(){
+    public void testString(){
         Path path = Paths.get("maxLength.json");
         this.testHelper(path.toAbsolutePath().toString());
 
+        path = Paths.get("minLength.json");
+        this.testHelper(path.toAbsolutePath().toString());
     }
 
-    public void testMinLength(){
-        Path path = Paths.get("minLength.json");
+    public void testArray(){
+        Path path = Paths.get("maxItems.json");
         this.testHelper(path.toAbsolutePath().toString());
 
+        path = Paths.get("minItems.json");
+        this.testHelper(path.toAbsolutePath().toString());
+
+        path = Paths.get("items.json");
+        this.testHelper(path.toAbsolutePath().toString());
+
+        path = Paths.get("additionalItems.json");
+        this.testHelper(path.toAbsolutePath().toString());
     }
 
-    public void testType(){
+//    public void testObject(){
+//        Path path = Paths.get("maxProperties.json");
+//        this.testHelper(path.toAbsolutePath().toString());
+//
+//        path = Paths.get("minProperties.json");
+//        this.testHelper(path.toAbsolutePath().toString());
+//
+//        path = Paths.get("required.json");
+//        this.testHelper(path.toAbsolutePath().toString());
+//
+//    }
+
+    public void testRequired(){
+        Path path = Paths.get("required.json");
+        this.testHelper(path.toAbsolutePath().toString());
+    }
+
+    public void testMinProperties(){
+        Path path = Paths.get("minProperties.json");
+        this.testHelper(path.toAbsolutePath().toString());
+    }
+
+    public void testMaxProperties(){
+        Path path = Paths.get("maxProperties.json");
+        this.testHelper(path.toAbsolutePath().toString());
+    }
+
+    public void testProperties(){
+        Path path = Paths.get("properties.json");
+        this.testHelper(path.toAbsolutePath().toString());
+    }
+
+    public void testGeneric(){
         Path path = Paths.get("type.json");
         this.testHelper(path.toAbsolutePath().toString());
 
-    }
-    public void testEnum(){
-        Path path = Paths.get("enum.json");
+        path = Paths.get("enum.json");
         this.testHelper(path.toAbsolutePath().toString());
-
     }
 }

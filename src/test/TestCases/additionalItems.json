@@ -13,7 +13,7 @@
             },
             {
                 "description": "additional items do not match schema",
-                "data": [ null, 2, 3, "foo" ],
+                "data": [ null, 2, 3, "foo"],
                 "valid": false
             }
         ]
