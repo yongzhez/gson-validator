@@ -1,18 +1,20 @@
 package org.yongzhez.gsonvalidator;
 
 
-import com.google.gson.*;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
 import junit.framework.TestCase;
 
 import org.junit.Before;
 
-
-
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
+import com.google.gson.JsonParser;
 
 /**
  * Created by youngz on 29/12/15.
@@ -61,30 +63,30 @@ public class TestValidator extends TestCase{
 
         }catch (FileNotFoundException ex) {
             ex.printStackTrace();
-        }catch (IOException ex) {
-            ex.printStackTrace();
+            fail();
         }catch (JsonParseException ex) {
             ex.printStackTrace();
+            fail();
         }
 
     }
 
     public void testNumeric(){
-        Path path = Paths.get("multipleOf.json");
+        Path path = Paths.get("TestCases/multipleOf.json");
         this.testHelper(path.toAbsolutePath().toString());
 
-        path = Paths.get("maximum.json");
+        path = Paths.get("TestCases/maximum.json");
         this.testHelper(path.toAbsolutePath().toString());
 
-        path = Paths.get("minimum.json");
+        path = Paths.get("TestCases/minimum.json");
         this.testHelper(path.toAbsolutePath().toString());
     }
 
     public void testString(){
-        Path path = Paths.get("maxLength.json");
+        Path path = Paths.get("TestCases/maxLength.json");
         this.testHelper(path.toAbsolutePath().toString());
 
-        path = Paths.get("minLength.json");
+        path = Paths.get("TestCases/minLength.json");
         this.testHelper(path.toAbsolutePath().toString());
     }
 
@@ -115,30 +117,30 @@ public class TestValidator extends TestCase{
 //    }
 
     public void testRequired(){
-        Path path = Paths.get("required.json");
+        Path path = Paths.get("TestCases/required.json");
         this.testHelper(path.toAbsolutePath().toString());
     }
 
     public void testMinProperties(){
-        Path path = Paths.get("minProperties.json");
+        Path path = Paths.get("TestCases/minProperties.json");
         this.testHelper(path.toAbsolutePath().toString());
     }
 
     public void testMaxProperties(){
-        Path path = Paths.get("maxProperties.json");
+        Path path = Paths.get("TestCases/maxProperties.json");
         this.testHelper(path.toAbsolutePath().toString());
     }
 
     public void testProperties(){
-        Path path = Paths.get("properties.json");
+        Path path = Paths.get("TestCases/properties.json");
         this.testHelper(path.toAbsolutePath().toString());
     }
 
     public void testGeneric(){
-        Path path = Paths.get("type.json");
+        Path path = Paths.get("TestCases/type.json");
         this.testHelper(path.toAbsolutePath().toString());
 
-        path = Paths.get("enum.json");
+        path = Paths.get("TestCases/enum.json");
         this.testHelper(path.toAbsolutePath().toString());
     }
 }
