@@ -71,18 +71,22 @@ public class TestValidator extends TestCase{
 
     }
 
-    public void testNumeric(){
+    public void test_multipleOf_KeyWord(){
         Path path = Paths.get("TestCases/multipleOf.json");
-        this.testHelper(path.toAbsolutePath().toString());
-
-        path = Paths.get("TestCases/maximum.json");
-        this.testHelper(path.toAbsolutePath().toString());
-
-        path = Paths.get("TestCases/minimum.json");
         this.testHelper(path.toAbsolutePath().toString());
     }
 
-    public void testString(){
+    public void test_maximum_Keyword(){
+        Path path = Paths.get("TestCases/maximum.json");
+        this.testHelper(path.toAbsolutePath().toString());
+    }
+
+    public void test_minimum_Keyword(){
+        Path path = Paths.get("TestCases/minimum.json");
+        this.testHelper(path.toAbsolutePath().toString());
+    }
+
+    public void test_MinAndMaxLength_Keyword(){
         Path path = Paths.get("TestCases/maxLength.json");
         this.testHelper(path.toAbsolutePath().toString());
 
@@ -91,30 +95,30 @@ public class TestValidator extends TestCase{
     }
 
     public void testArray(){
-        Path path = Paths.get("maxItems.json");
+        Path path = Paths.get("TestCases/maxItems.json");
         this.testHelper(path.toAbsolutePath().toString());
 
-        path = Paths.get("minItems.json");
+        path = Paths.get("TestCases/minItems.json");
         this.testHelper(path.toAbsolutePath().toString());
 
-        path = Paths.get("items.json");
+        path = Paths.get("TestCases/items.json");
         this.testHelper(path.toAbsolutePath().toString());
 
-        path = Paths.get("additionalItems.json");
+        path = Paths.get("TestCases/additionalItems.json");
         this.testHelper(path.toAbsolutePath().toString());
     }
 
-//    public void testObject(){
-//        Path path = Paths.get("maxProperties.json");
-//        this.testHelper(path.toAbsolutePath().toString());
-//
-//        path = Paths.get("minProperties.json");
-//        this.testHelper(path.toAbsolutePath().toString());
-//
-//        path = Paths.get("required.json");
-//        this.testHelper(path.toAbsolutePath().toString());
-//
-//    }
+    public void testObject(){
+        Path path = Paths.get("TestCases/maxProperties.json");
+        this.testHelper(path.toAbsolutePath().toString());
+
+        path = Paths.get("TestCases/minProperties.json");
+        this.testHelper(path.toAbsolutePath().toString());
+
+        path = Paths.get("TestCases/required.json");
+        this.testHelper(path.toAbsolutePath().toString());
+
+    }
 
     public void testRequired(){
         Path path = Paths.get("TestCases/required.json");

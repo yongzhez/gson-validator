@@ -2,7 +2,6 @@ package org.yongzhez.gsonvalidator;
 
 import com.google.gson.*;
 import org.json.JSONException;
-import org.json.JSONString;
 
 import java.util.Map;
 import java.util.Set;
@@ -29,15 +28,15 @@ public class Validator {
             if (element.isNumber()){
                 //adheres to section 5.1.1 of Json schema validation for multiple of
                 if (schema.has("multipleOf")){
-                    valid = NumberValidator.validMultipleOf( element, schema );
+                    valid = MultipleOfValidator.validateNum( element, schema );
                 }
                 //adheres to section 5.1.2 of Json schema validation for max and exclusive max
                 if (schema.has("maximum") || schema.has("exclusiveMaximum")){
-                    valid = NumberValidator.validMax( element, schema );
+                    valid = MaximumValidator.validMax( element, schema );
                 }
                 //adheres to section 5.1.3 of Json schema validation for min and exclusive min
                 if (schema.has("minimum") || schema.has("exclusiveMinimum")){
-                    valid = NumberValidator.validMin( element, schema );
+                    valid = MinimumValidator.validMin( element, schema );
                 }
             }
         }
@@ -60,19 +59,11 @@ public class Validator {
             if (element.isString()){
                 //adheres to section 5.2.1 of Json schema validation for maxLength
                 if (schema.has("maxLength")){
-                    String json = element.getAsString();
-                    Integer validate = schema.get("maxLength").getAsInt();
-                    if (json.length() > validate){
-                        valid = false;
-                    }
+                    valid = LengthValidator.validLength(element, schema, "maxLength");
                 }
                 //adheres to section 5.2.2 of Json schema validation for minLength
                 if (schema.has("minLength")){
-                    String json = element.getAsString();
-                    Integer validate = schema.get("minLength").getAsInt();
-                    if (json.length() < validate){
-                        valid = false;
-                    }
+                    valid = LengthValidator.validLength(element, schema, "minLength");
                 }
             }
         }
@@ -95,43 +86,10 @@ public class Validator {
             //adheres to section 5.3.1 of Json schema validation for items and additionalItems
             if (schema.has("items")){
                 if (schema.get("items").isJsonArray()){
-                    JsonArray setOfItemType = schema.get("items").getAsJsonArray();
-                    outerloop:
-                    for (int i = 0; i < properties.size(); i ++){
-                        if (i >= setOfItemType.size()){
-                            if ( schema.has("additionalItems")){
-                                if ( schema.get("additionalItems").isJsonPrimitive() &&
-                                        schema.get("additionalItems").getAsJsonPrimitive().isBoolean()){
-                                    if (!schema.get("additionalItems").getAsBoolean()){
-                                        valid = false;
-                                    }
-                                }else{
-                                    valid = this.validateGeneric(properties.get(i),
-                                            schema.get("additionalItems").getAsJsonObject());
-                                }
-                            }else{
-                                break outerloop;
-                            }
-                        }else{
-                                valid = this.validateGeneric(properties.get(i),
-                                        setOfItemType.get(i).getAsJsonObject());
-                        }
-                        if (!valid){
-                            break outerloop;
-                        }
-                    }
-
+                    valid = ItemsValidator.validItemsArray(properties, schema, this, valid);
                 }
                 if (schema.get("items").isJsonObject()){
-                    outerloop:
-                    for (JsonElement property: properties){
-                        //use generic validation for type
-                        valid = this.validateGeneric(property,
-                                schema.get("items").getAsJsonObject());
-                        if (!valid){
-                            break outerloop;
-                        }
-                    }
+                    valid = ItemsValidator.validItemsObject(properties, schema, this, valid);
                 }
             }
             //adheres to section 5.3.2 of Json schema validation for maxItems
@@ -226,7 +184,7 @@ public class Validator {
                 //testing for an array of types.
                 for (int i = 0; i < array.size(); i ++){
                     String type = array.get(i).getAsJsonPrimitive().getAsString();
-                    valid = this.typeValidateHelper(type, json, valid);
+                    valid = this.typeValidateHelper(type, json, true);
                     //if even one of the types in the array are met, we return true
                     //after every iteration check on an element in the type array,
                     // we reset the validation to true for the next iteration
@@ -238,17 +196,16 @@ public class Validator {
                 }
                 return false;
             }else{
-                valid = this.typeValidateHelper(schema.get("type").getAsString(), json, valid);
+                valid = this.typeValidateHelper(schema.get("type").getAsString(), json, true);
             }
         }
         //adheres to section 5.5.1 of Json schema validation for enum
         if (schema.has("enum")){
-            outerloop:
             for (JsonElement field : schema.get("enum").getAsJsonArray()) {
                 //first check if the json is an object, if so then evaluate accordingly
                 if (field.equals(json)) {
                     valid = true;
-                    break outerloop;
+                    break ;
                 } else {
                     if (json.isJsonObject() && field.isJsonObject()) {
                         for (Map.Entry<String, JsonElement> entry : json.getAsJsonObject().entrySet()) {
