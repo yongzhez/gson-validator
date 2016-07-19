@@ -120,43 +120,11 @@ public class Validator {
     public boolean typeValidateHelper(String type, JsonElement json, boolean valid){
 
         switch(type){
-            case "integer": case "number":
-                if (json.isJsonPrimitive()) {
-                    JsonPrimitive element = json.getAsJsonPrimitive();
-                    if (element.isNumber()) {
-                        if (element.getAsNumber().intValue() % element.getAsNumber().doubleValue() != 0 &&
-                                type.equals("integer")) {
-                            valid = false;
-                        }
-                    }else{
-                        valid = false;
-                    }
-                }else{
-                    valid = false;
-                }
-                break;
-            case "string":
-                if (json.isJsonPrimitive()){
-                    JsonPrimitive element = json.getAsJsonPrimitive();
-                    if (!(element.isString())){
-                        valid = false;
-                    }
-                }else{
-                    valid = false;
-                }
+            case "integer": case "number": case "string":  case "boolean":
+                valid = PrimitiveTypeValidator.validPrimitiveType(json, type);
                 break;
             case "object":
                 if (!(json.isJsonObject())){
-                    valid = false;
-                }
-                break;
-            case "boolean":
-                if (json.isJsonPrimitive()){
-                    JsonPrimitive element = json.getAsJsonPrimitive();
-                    if (!(element.isBoolean())){
-                        valid = false;
-                    }
-                }else{
                     valid = false;
                 }
                 break;
@@ -174,6 +142,13 @@ public class Validator {
         return valid;
     }
 
+    /**
+     * Takes in a jsonElement to be validated and the schema that it validates
+     * which adheres to validated generic type jsons
+     * @param json
+     * @param schema
+     * @return
+     */
     public boolean validateGeneric(JsonElement json, JsonObject schema){
         boolean valid = true;
 
@@ -255,13 +230,12 @@ public class Validator {
             //adheres to section 5.4.4 of Json schema validation for properties
             if (schema.has("properties")){
                 JsonObject jsonObject = object.getAsJsonObject();
-                outerloop:
                 for (Map.Entry<String, JsonElement>  entrySet: schema.get("properties").getAsJsonObject().entrySet()){
                     if (entrySet.getValue().isJsonObject() && jsonObject.has(entrySet.getKey())){
                         valid = this.validator(jsonObject.get(entrySet.getKey()), entrySet.getValue().getAsJsonObject());
                     }
                     if (!valid){
-                        break outerloop;
+                        break;
 
                     }
                 }
@@ -273,6 +247,7 @@ public class Validator {
 
         return valid;
     }
+
     /**
      * takes in a json and a schema and checks if json corresponds to schema
      * @param json a JSONObject

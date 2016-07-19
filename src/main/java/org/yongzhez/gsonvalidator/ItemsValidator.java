@@ -22,7 +22,7 @@ public class ItemsValidator {
         for (int i = 0; i < properties.size(); i ++){
             if (i >= setOfItemType.size()){
                 if ( schema.has("additionalItems")){
-                    ItemsValidator.validAdditionalItems(properties, schema, i, validator, valid);
+                    valid = ItemsValidator.validAdditionalItems(properties, schema, i, validator, valid);
                 }else{
                     break;
                 }

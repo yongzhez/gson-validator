@@ -54,7 +54,8 @@ public class TestValidator extends TestCase{
                     boolean result = this.validator.validator(test.getAsJsonObject().get("data"),
                             schema);
                     //check against the valid field in the json file, prints out the test case corresponding
-                    assertEquals(test.getAsJsonObject().get("description").getAsString(),
+                    assertEquals(set.get("description").getAsString()
+                            + "/" +  test.getAsJsonObject().get("description").getAsString(),
                             test.getAsJsonObject().get("valid").getAsBoolean(),
                             result);
 
@@ -94,17 +95,24 @@ public class TestValidator extends TestCase{
         this.testHelper(path.toAbsolutePath().toString());
     }
 
+    public void test_items_KeyWord(){
+        Path path = Paths.get("TestCases/items.json");
+        this.testHelper(path.toAbsolutePath().toString());
+
+        path = Paths.get("TestCases/additionalItems.json");
+        this.testHelper(path.toAbsolutePath().toString());
+    }
+
+    public void test_type_KeyWord(){
+        Path path = Paths.get("TestCases/type.json");
+        this.testHelper(path.toAbsolutePath().toString());
+    }
+
     public void testArray(){
         Path path = Paths.get("TestCases/maxItems.json");
         this.testHelper(path.toAbsolutePath().toString());
 
         path = Paths.get("TestCases/minItems.json");
-        this.testHelper(path.toAbsolutePath().toString());
-
-        path = Paths.get("TestCases/items.json");
-        this.testHelper(path.toAbsolutePath().toString());
-
-        path = Paths.get("TestCases/additionalItems.json");
         this.testHelper(path.toAbsolutePath().toString());
     }
 
