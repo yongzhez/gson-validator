@@ -26,9 +26,7 @@ public class TestValidator extends TestCase{
 
     @Before
     public void setUp(){
-
         this.validator = new Validator();
-
     }
 
     /**
@@ -65,24 +63,20 @@ public class TestValidator extends TestCase{
         }catch (FileNotFoundException ex) {
             ex.printStackTrace();
             fail();
-        }catch (JsonParseException ex) {
-            ex.printStackTrace();
-            fail();
         }
-
     }
 
-    public void test_multipleOf_KeyWord(){
+    public void test_MultipleOf_KeyWord(){
         Path path = Paths.get("TestCases/multipleOf.json");
         this.testHelper(path.toAbsolutePath().toString());
     }
 
-    public void test_maximum_Keyword(){
+    public void test_Maximum_Keyword(){
         Path path = Paths.get("TestCases/maximum.json");
         this.testHelper(path.toAbsolutePath().toString());
     }
 
-    public void test_minimum_Keyword(){
+    public void test_Minimum_Keyword(){
         Path path = Paths.get("TestCases/minimum.json");
         this.testHelper(path.toAbsolutePath().toString());
     }
@@ -95,7 +89,7 @@ public class TestValidator extends TestCase{
         this.testHelper(path.toAbsolutePath().toString());
     }
 
-    public void test_items_KeyWord(){
+    public void test_Items_KeyWord(){
         Path path = Paths.get("TestCases/items.json");
         this.testHelper(path.toAbsolutePath().toString());
 
@@ -103,12 +97,12 @@ public class TestValidator extends TestCase{
         this.testHelper(path.toAbsolutePath().toString());
     }
 
-    public void test_type_KeyWord(){
+    public void test_Type_KeyWord(){
         Path path = Paths.get("TestCases/type.json");
         this.testHelper(path.toAbsolutePath().toString());
     }
 
-    public void testArray(){
+    public void test_MaxMinItem_Keywords(){
         Path path = Paths.get("TestCases/maxItems.json");
         this.testHelper(path.toAbsolutePath().toString());
 
@@ -116,43 +110,28 @@ public class TestValidator extends TestCase{
         this.testHelper(path.toAbsolutePath().toString());
     }
 
-    public void testObject(){
-        Path path = Paths.get("TestCases/maxProperties.json");
-        this.testHelper(path.toAbsolutePath().toString());
-
-        path = Paths.get("TestCases/minProperties.json");
-        this.testHelper(path.toAbsolutePath().toString());
-
-        path = Paths.get("TestCases/required.json");
-        this.testHelper(path.toAbsolutePath().toString());
-
-    }
-
-    public void testRequired(){
+    public void test_Required_Keyword(){
         Path path = Paths.get("TestCases/required.json");
         this.testHelper(path.toAbsolutePath().toString());
     }
 
-    public void testMinProperties(){
+    public void test_MinProperties_Keyword(){
         Path path = Paths.get("TestCases/minProperties.json");
         this.testHelper(path.toAbsolutePath().toString());
     }
 
-    public void testMaxProperties(){
+    public void test_MaxProperties_Keyword(){
         Path path = Paths.get("TestCases/maxProperties.json");
         this.testHelper(path.toAbsolutePath().toString());
     }
 
-    public void testProperties(){
+    public void test_Properties_Keyword(){
         Path path = Paths.get("TestCases/properties.json");
         this.testHelper(path.toAbsolutePath().toString());
     }
 
-    public void testGeneric(){
-        Path path = Paths.get("TestCases/type.json");
-        this.testHelper(path.toAbsolutePath().toString());
-
-        path = Paths.get("TestCases/enum.json");
+    public void test_Enum_Keyword(){
+        Path path = Paths.get("TestCases/enum.json");
         this.testHelper(path.toAbsolutePath().toString());
     }
 }

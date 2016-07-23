@@ -111,38 +111,6 @@ public class Validator {
     }
 
     /**
-     * helps with type validation for a json element and a string type
-     * @param type a string for validation
-     * @param json the json to be type checked
-     * @param valid the validation to be passed in
-     * @return whether the json is the type that it adheres to
-     */
-    public boolean typeValidateHelper(String type, JsonElement json, boolean valid){
-
-        switch(type){
-            case "integer": case "number": case "string":  case "boolean":
-                valid = PrimitiveTypeValidator.validPrimitiveType(json, type);
-                break;
-            case "object":
-                if (!(json.isJsonObject())){
-                    valid = false;
-                }
-                break;
-            case "array":
-                if (!(json.isJsonArray())){
-                    valid = false;
-                }
-                break;
-            case "null":
-                if (!(json.isJsonNull())){
-                    valid = false;
-                }
-                break;
-        }
-        return valid;
-    }
-
-    /**
      * Takes in a jsonElement to be validated and the schema that it validates
      * which adheres to validated generic type jsons
      * @param json
@@ -159,19 +127,17 @@ public class Validator {
                 //testing for an array of types.
                 for (int i = 0; i < array.size(); i ++){
                     String type = array.get(i).getAsJsonPrimitive().getAsString();
-                    valid = this.typeValidateHelper(type, json, true);
-                    //if even one of the types in the array are met, we return true
-                    //after every iteration check on an element in the type array,
+                    valid = TypeValidator.typeValidateHelper(type, json);
+                    // if even one of the types in the array are met, we return true.
+                    // after every iteration check on an element in the type array,
                     // we reset the validation to true for the next iteration
                     if (valid){
                         return true;
-                    }else{
-                        valid = true;
                     }
                 }
                 return false;
             }else{
-                valid = this.typeValidateHelper(schema.get("type").getAsString(), json, true);
+                valid = TypeValidator.typeValidateHelper(schema.get("type").getAsString(), json);
             }
         }
         //adheres to section 5.5.1 of Json schema validation for enum
@@ -242,8 +208,6 @@ public class Validator {
             }
             //adheres to section 5.4.4 of Json schema validation for additionalProperties
         }
-
-
 
         return valid;
     }
