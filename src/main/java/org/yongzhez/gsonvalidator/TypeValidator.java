@@ -1,6 +1,8 @@
 package org.yongzhez.gsonvalidator;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 
 /**
@@ -8,13 +10,39 @@ import com.google.gson.JsonPrimitive;
  */
 public class TypeValidator {
 
+    public boolean typeValidation(JsonElement json, JsonObject schema){
+        boolean valid = true;
+
+        //adheres to section 5.5.2 of Json schema validation for type
+        if (schema.has("type")){
+            if (schema.get("type").isJsonArray()){
+                JsonArray array = schema.get("type").getAsJsonArray();
+                //testing for an array of types.
+                for (int i = 0; i < array.size(); i ++){
+                    String type = array.get(i).getAsJsonPrimitive().getAsString();
+                    valid = this.typeValidateHelper(type, json);
+                    // if even one of the types in the array are met, we return true.
+                    // after every iteration check on an element in the type array,
+                    // we reset the validation to true for the next iteration
+                    if (valid){
+                        return true;
+                    }
+                }
+                return false;
+            }else{
+                valid = this.typeValidateHelper(schema.get("type").getAsString(), json);
+            }
+        }
+        return valid;
+    }
+
     /**
      * helps with type validation for a json element and a string type
      * @param type a string for validation
      * @param json the json to be type checked
      * @return whether the json is the type that it adheres to
      */
-    public static boolean typeValidateHelper(String type, JsonElement json){
+    private boolean typeValidateHelper(String type, JsonElement json){
         boolean valid = true;
 
         switch(type){
@@ -46,7 +74,7 @@ public class TypeValidator {
      * @param type
      * @return
      */
-    public static boolean validPrimitiveType( String type, JsonElement json) {
+    private static boolean validPrimitiveType( String type, JsonElement json) {
         if (json.isJsonPrimitive()) {
             JsonPrimitive element = json.getAsJsonPrimitive();
             switch(type){

@@ -19,15 +19,16 @@ public class PrimitiveValidator implements Validator {
      * @return true if Json adheres to schema, false otherwise
      */
     public boolean validateString(JsonPrimitive string, JsonObject schema){
+        boolean valid = true;
 
         if (string.isString()){
             //adheres to section 5.2.1 of Json schema validation for maxLength
             if (schema.has("maxLength")){
-                valid = this.validteLength(string, schema, "maxLength");
+                valid = this.validateLength(string, schema, "maxLength");
             }
             //adheres to section 5.2.2 of Json schema validation for minLength
             if (schema.has("minLength")){
-                valid = this.validteLength(string, schema, "minLength");
+                valid = this.validateLength(string, schema, "minLength");
             }
         }
 
@@ -42,6 +43,7 @@ public class PrimitiveValidator implements Validator {
      * @return true if Json adheres to schema, false otherwise
      */
     public boolean validateNumber(JsonPrimitive number, JsonObject schema){
+        boolean valid = true;
 
         //if jsonElement is a primitve, check if it is a number, if it's a string, ignore it
 
@@ -52,15 +54,13 @@ public class PrimitiveValidator implements Validator {
             }
             //adheres to section 5.1.2 of Json schema validation for max and exclusive max
             if (schema.has("maximum") || schema.has("exclusiveMaximum")){
-                valid = this.validMax( number, schema );
+                valid = this.validateMax( number, schema );
             }
             //adheres to section 5.1.3 of Json schema validation for min and exclusive min
             if (schema.has("minimum") || schema.has("exclusiveMinimum")){
-                valid = this.validMin( number, schema );
+                valid = this.validateMin( number, schema );
             }
         }
-
-
         return valid;
     }
 
@@ -102,7 +102,7 @@ public class PrimitiveValidator implements Validator {
      * @param type
      * @return
      */
-    private boolean validteLength(JsonElement element, JsonObject schema, String type ){
+    private boolean validateLength(JsonElement element, JsonObject schema, String type ){
         String json = element.getAsString();
         Integer validate = schema.get(type).getAsInt();
         if (json.length() > validate && type.equals("maxLength")){
@@ -121,7 +121,7 @@ public class PrimitiveValidator implements Validator {
      * @param schema
      * @return
      */
-    private boolean validMin(JsonElement element, JsonObject schema){
+    private boolean validateMin(JsonElement element, JsonObject schema){
         Double json = element.getAsDouble();
         Double validate = schema.get("minimum").getAsDouble();
         if (json < validate){
@@ -139,7 +139,7 @@ public class PrimitiveValidator implements Validator {
      * @param schema
      * @return
      */
-    private boolean validMax(JsonElement element, JsonObject schema){
+    private boolean validateMax(JsonElement element, JsonObject schema){
         Double json = element.getAsDouble();
         Double validate = schema.get("maximum").getAsDouble();
         if (json > validate){
@@ -168,9 +168,6 @@ public class PrimitiveValidator implements Validator {
             }
         }
 
-        boolean result = this.valid;
-        this.valid = true;
-
-        return result;
+        return valid;
     }
 }

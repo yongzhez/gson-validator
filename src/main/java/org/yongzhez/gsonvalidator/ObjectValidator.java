@@ -13,51 +13,17 @@ import java.util.Map;
 public class ObjectValidator implements Validator {
 
     private PrimitiveValidator primitiveValidator;
+    private ArrayValidator arrayValidator;
+    private TypeValidator typeValidator;
     private boolean valid;
 
     public ObjectValidator() {
         this.primitiveValidator = new PrimitiveValidator();
+        this.arrayValidator = new ArrayValidator();
+        this.typeValidator = new TypeValidator();
         this.valid = true;
     }
 
-    /**
-     *Takes in a jsonElement to be validated, and the schema that it validates
-     * which contains items, additionalItems, maxItems, minItems
-     * @param schema a schema containing the above mentioned keywords
-     * @param array a jsonElement to be validated ( doesn't have to be string )
-     * @return true if Json adheres to schema, false otherwise
-     */
-    public boolean validateArray(JsonElement array, JsonObject schema){
-        boolean valid = true;
-
-        if (array.isJsonArray()){
-            JsonArray properties = array.getAsJsonArray();
-            //adheres to section 5.3.1 of Json schema validation for items and additionalItems
-            if (schema.has("items")){
-                if (schema.get("items").isJsonArray()){
-                    valid = ItemsValidator.validItemsArray(properties, schema, this, valid);
-                }
-                if (schema.get("items").isJsonObject()){
-                    valid = ItemsValidator.validItemsObject(properties, schema, this, valid);
-                }
-            }
-            //adheres to section 5.3.2 of Json schema validation for maxItems
-            if (schema.has("maxItems")){
-                if (properties.size() > schema.get("maxItems").getAsInt()){
-                    valid = false;
-                }
-            }
-            //adheres to section 5.3.3 of Json schema validation for minItems
-            if (schema.has("minItems")){
-                if (properties.size() < schema.get("minItems").getAsInt()){
-                    valid = false;
-                }
-            }
-            //adheres to section 5.3.4 of Json schema validation for uniqueItems
-        }
-
-        return valid;
-    }
 
     /**
      * Takes in a jsonElement to be validated and the schema that it validates
@@ -67,28 +33,7 @@ public class ObjectValidator implements Validator {
      * @return
      */
     public boolean validateGeneric(JsonElement json, JsonObject schema){
-        boolean valid = true;
 
-        //adheres to section 5.5.2 of Json schema validation for type
-        if (schema.has("type")){
-            if (schema.get("type").isJsonArray()){
-                JsonArray array = schema.get("type").getAsJsonArray();
-                //testing for an array of types.
-                for (int i = 0; i < array.size(); i ++){
-                    String type = array.get(i).getAsJsonPrimitive().getAsString();
-                    valid = TypeValidator.typeValidateHelper(type, json);
-                    // if even one of the types in the array are met, we return true.
-                    // after every iteration check on an element in the type array,
-                    // we reset the validation to true for the next iteration
-                    if (valid){
-                        return true;
-                    }
-                }
-                return false;
-            }else{
-                valid = TypeValidator.typeValidateHelper(schema.get("type").getAsString(), json);
-            }
-        }
         //adheres to section 5.5.1 of Json schema validation for enum
         if (schema.has("enum")){
             for (JsonElement enumReq : schema.get("enum").getAsJsonArray()) {
@@ -113,8 +58,6 @@ public class ObjectValidator implements Validator {
                     else{
                         valid = false;
                     }
-
-
                 }
             }
         }
@@ -129,21 +72,21 @@ public class ObjectValidator implements Validator {
      * @return
      */
     public boolean validateObject(JsonElement object, JsonObject schema){
-        JsonObjectValidator JsonObjectValidatore = new JsonObjectValidator();
+        JsonObjectValidator jsonObjectValidator = new JsonObjectValidator();
 
         if (object.isJsonObject()){
             JsonObject json = object.getAsJsonObject();
 
-            JsonObjectValidatore.validBase(json, schema);
+            jsonObjectValidator.validBase(json, schema);
 
             //adheres to section 5.4.4 of Json schema validation for properties
             if (schema.has("properties")){
-                JsonObjectValidatore.validProperties(json, schema, this);
+                jsonObjectValidator.validProperties(json, schema, this);
             }
             //adheres to section 5.4.4 of Json schema validation for additionalProperties
         }
 
-        return JsonObjectValidatore.isValid();
+        return jsonObjectValidator.isValid();
     }
 
     /**
@@ -159,14 +102,16 @@ public class ObjectValidator implements Validator {
                     || schema.has("properties")){
                 this.valid = this.validateObject(json, schema);
             }
-            if (schema.has("type") || schema.has("enum")){
+            if (schema.has("type")){
+                this.valid = typeValidator.typeValidation(json, schema);
+            }
+            if (schema.has("enum")){
                 this.valid = this.validateGeneric(json, schema);
             }
 
-            if (schema.has("additionalItems") || schema.has("items") || schema.has("maxItems") ||
-                    schema.has("minItems")){
-                this.valid = this.validateArray(json,schema);
-            }
+            arrayValidator.setValid(this.valid);
+            this.valid = arrayValidator.validator(json, schema);
+
             primitiveValidator.setValid(this.valid);
             this.valid = primitiveValidator.validator(json, schema);
 
