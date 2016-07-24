@@ -13,7 +13,6 @@ import org.junit.Before;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParseException;
 import com.google.gson.JsonParser;
 
 /**
@@ -21,49 +20,11 @@ import com.google.gson.JsonParser;
  */
 public class TestValidator extends TestCase{
 
-
-    protected Validator validator;
+    protected ObjectValidator objectValidator;
 
     @Before
     public void setUp(){
-        this.validator = new Validator();
-    }
-
-    /**
-     * Taking in a file path, goes through every single one of the tests and runs
-     * validator against the file path.
-     * @param testJson
-     */
-    public void testHelper(String testJson){
-        try{
-            FileReader reader = new FileReader(testJson);
-            JsonParser jsonParser = new JsonParser();
-            JsonArray root = jsonParser.parse(reader).getAsJsonArray();
-
-            //go through every test/schema set
-            for (int i = 0; i < root.size(); i ++){
-                JsonObject set = root.get(i).getAsJsonObject();
-
-                JsonObject schema = set.get("schema").getAsJsonObject();
-                JsonArray tests = set.get("tests").getAsJsonArray();
-
-                for (JsonElement test: tests){
-                    //run validator on every set's test set
-                    boolean result = this.validator.validator(test.getAsJsonObject().get("data"),
-                            schema);
-                    //check against the valid field in the json file, prints out the test case corresponding
-                    assertEquals(set.get("description").getAsString()
-                            + "/" +  test.getAsJsonObject().get("description").getAsString(),
-                            test.getAsJsonObject().get("valid").getAsBoolean(),
-                            result);
-
-                }
-            }
-
-        }catch (FileNotFoundException ex) {
-            ex.printStackTrace();
-            fail();
-        }
+        this.objectValidator = new ObjectValidator();
     }
 
     public void test_MultipleOf_KeyWord(){
@@ -133,5 +94,42 @@ public class TestValidator extends TestCase{
     public void test_Enum_Keyword(){
         Path path = Paths.get("TestCases/enum.json");
         this.testHelper(path.toAbsolutePath().toString());
+    }
+
+    /**
+     * Taking in a file path, goes through every single one of the tests and runs
+     * objectValidator against the file path.
+     * @param testJson
+     */
+    public void testHelper(String testJson){
+        try{
+            FileReader reader = new FileReader(testJson);
+            JsonParser jsonParser = new JsonParser();
+            JsonArray root = jsonParser.parse(reader).getAsJsonArray();
+
+            //go through every test/schema set
+            for (int i = 0; i < root.size(); i ++){
+                JsonObject set = root.get(i).getAsJsonObject();
+
+                JsonObject schema = set.get("schema").getAsJsonObject();
+                JsonArray tests = set.get("tests").getAsJsonArray();
+
+                for (JsonElement test: tests){
+                    //run objectValidator on every set's test set
+                    boolean result = this.objectValidator.validator(test.getAsJsonObject().get("data"),
+                            schema);
+                    //check against the valid field in the json file, prints out the test case corresponding
+                    assertEquals(set.get("description").getAsString()
+                                    + "/" +  test.getAsJsonObject().get("description").getAsString(),
+                            test.getAsJsonObject().get("valid").getAsBoolean(),
+                            result);
+
+                }
+            }
+
+        }catch (FileNotFoundException ex) {
+            ex.printStackTrace();
+            fail();
+        }
     }
 }

@@ -13,21 +13,21 @@ public class ItemsValidator {
      * adheres to section 5.3.1 of Json schema validation for items and additionalItems for Array
      * @param properties
      * @param schema
-     * @param validator
+     * @param objectValidator
      * @param valid
      * @return
      */
-    public static boolean validItemsArray(JsonArray properties, JsonObject schema, Validator validator, boolean valid){
+    public static boolean validItemsArray(JsonArray properties, JsonObject schema, ObjectValidator objectValidator, boolean valid){
         JsonArray setOfItemType = schema.get("items").getAsJsonArray();
         for (int i = 0; i < properties.size(); i ++){
             if (i >= setOfItemType.size()){
                 if ( schema.has("additionalItems")){
-                    valid = ItemsValidator.validAdditionalItems(properties, schema, i, validator, valid);
+                    valid = ItemsValidator.validAdditionalItems(properties, schema, i, objectValidator, valid);
                 }else{
                     break;
                 }
             }else{
-                valid = validator.validateGeneric(properties.get(i),
+                valid = objectValidator.validateGeneric(properties.get(i),
                         setOfItemType.get(i).getAsJsonObject());
             }
             if (!valid){
@@ -41,14 +41,14 @@ public class ItemsValidator {
      * adheres to section 5.3.1 of Json schema validation for items and additionalItems for Object
      * @param properties
      * @param schema
-     * @param validator
+     * @param objectValidator
      * @param valid
      * @return
      */
-    public static boolean validItemsObject(JsonArray properties, JsonObject schema, Validator validator, boolean valid){
+    public static boolean validItemsObject(JsonArray properties, JsonObject schema, ObjectValidator objectValidator, boolean valid){
         for (JsonElement property: properties){
             //use generic validation for type
-            valid = validator.validateGeneric(property,
+            valid = objectValidator.validateGeneric(property,
                     schema.get("items").getAsJsonObject());
             if (!valid){
                 break ;
@@ -63,19 +63,19 @@ public class ItemsValidator {
      * @param properties
      * @param schema
      * @param index
-     * @param validator
+     * @param objectValidator
      * @param valid
      * @return
      */
-    public static boolean validAdditionalItems( JsonArray properties, JsonObject schema, int index,
-                                                Validator validator, boolean valid){
+    public static boolean validAdditionalItems(JsonArray properties, JsonObject schema, int index,
+                                               ObjectValidator objectValidator, boolean valid){
         if ( schema.get("additionalItems").isJsonPrimitive() &&
                 schema.get("additionalItems").getAsJsonPrimitive().isBoolean()){
             if (!schema.get("additionalItems").getAsBoolean()){
                 valid = false;
             }
         }else{
-            valid = validator.validateGeneric(properties.get(index),
+            valid = objectValidator.validateGeneric(properties.get(index),
                     schema.get("additionalItems").getAsJsonObject());
         }
         return valid;
