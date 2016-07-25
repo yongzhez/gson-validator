@@ -96,6 +96,21 @@ public class TestValidator extends TestCase{
         this.testHelper(path.toAbsolutePath().toString());
     }
 
+    public void test_allOf_Keyword(){
+        Path path = Paths.get("TestCases/allOf.json");
+        this.testHelper(path.toAbsolutePath().toString());
+    }
+
+    public void test_anyOf_Keyword(){
+        Path path = Paths.get("TestCases/anyOf.json");
+        this.testHelper(path.toAbsolutePath().toString());
+    }
+
+    public void test_oneOf_Keyword(){
+        Path path = Paths.get("TestCases/oneOf.json");
+        this.testHelper(path.toAbsolutePath().toString());
+    }
+
     /**
      * Taking in a file path, goes through every single one of the tests and runs
      * objectValidator against the file path.

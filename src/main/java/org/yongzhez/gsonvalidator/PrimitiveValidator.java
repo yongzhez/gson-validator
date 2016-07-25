@@ -4,12 +4,18 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 
+import java.util.Map;
+
 /**
  * Created by youngz on 23/07/16.
  */
-public class PrimitiveValidator implements Validator {
+public class PrimitiveValidator extends  BaseValidator {
 
-    private boolean valid;
+    private TypeValidator typeValidator;
+
+    public PrimitiveValidator() {
+        this.typeValidator = new TypeValidator();
+    }
 
     /**
      *Takes in a jsonElement to be validated, and the schema that it validates
@@ -18,8 +24,7 @@ public class PrimitiveValidator implements Validator {
      * @param string a jsonElement to be validated ( doesn't have to be string )
      * @return true if Json adheres to schema, false otherwise
      */
-    public boolean validateString(JsonPrimitive string, JsonObject schema){
-        boolean valid = true;
+    public void validateString(JsonPrimitive string, JsonObject schema){
 
         if (string.isString()){
             //adheres to section 5.2.1 of Json schema validation for maxLength
@@ -32,7 +37,6 @@ public class PrimitiveValidator implements Validator {
             }
         }
 
-        return valid;
     }
 
     /**
@@ -42,8 +46,7 @@ public class PrimitiveValidator implements Validator {
      * @param number a jsonElement to be validated ( doesn't have to be number )
      * @return true if Json adheres to schema, false otherwise
      */
-    public boolean validateNumber(JsonPrimitive number, JsonObject schema){
-        boolean valid = true;
+    public void validateNumber(JsonPrimitive number, JsonObject schema){
 
         //if jsonElement is a primitve, check if it is a number, if it's a string, ignore it
 
@@ -61,7 +64,7 @@ public class PrimitiveValidator implements Validator {
                 valid = this.validateMin( number, schema );
             }
         }
-        return valid;
+
     }
 
     /**
@@ -151,8 +154,17 @@ public class PrimitiveValidator implements Validator {
         return true;
     }
 
-    public void setValid(boolean valid) {
-        this.valid = valid;
+    @Override
+    public void validEnum(JsonElement json, JsonObject schema) {
+        for (JsonElement enumReq : schema.get("enum").getAsJsonArray()) {
+            //first check if the json is an primitive
+            if (enumReq.equals(json)) {
+                valid = true;
+                return;
+            }
+        }
+
+        valid = false;
     }
 
     @Override
@@ -161,13 +173,32 @@ public class PrimitiveValidator implements Validator {
             JsonPrimitive element = json.getAsJsonPrimitive();
             if (schema.has("multipleOf") || schema.has("maximum") || schema.has("exclusiveMaximum") ||
                     schema.has("minimum") || schema.has("exclusiveMinimum")){
-                valid = this.validateNumber(element, schema);
+                this.validateNumber(element, schema);
             }
             if (schema.has("maxLength") || schema.has("minLength")){
-                valid = this.validateString(element, schema);
+                this.validateString(element, schema);
             }
+            if (schema.has("type") && valid){
+                valid = this.typeValidator.typeValidation(json, schema, valid);
+            }
+            if (schema.has("enum") && valid){
+                this.validEnum(element, schema);
+            }
+            if (schema.has("allOf") && valid){
+                this.allOf(element, schema);
+            }
+            if (schema.has("anyOf") && valid){
+                this.anyOf(element, schema);
+            }
+            if (schema.has("oneOf") && valid){
+                this.oneOf(element, schema);
+            }
+
         }
 
-        return valid;
+        boolean result = valid;
+        this.valid = true;
+
+        return result;
     }
 }

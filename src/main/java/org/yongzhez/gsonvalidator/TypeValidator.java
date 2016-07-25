@@ -10,8 +10,7 @@ import com.google.gson.JsonPrimitive;
  */
 public class TypeValidator {
 
-    public boolean typeValidation(JsonElement json, JsonObject schema){
-        boolean valid = true;
+    public boolean typeValidation(JsonElement json, JsonObject schema, boolean valid){
 
         //adheres to section 5.5.2 of Json schema validation for type
         if (schema.has("type")){
@@ -47,7 +46,7 @@ public class TypeValidator {
 
         switch(type){
             case "integer": case "number": case "string":  case "boolean":
-                valid = TypeValidator.validPrimitiveType(type, json);
+                valid = this.validPrimitiveType(type, json);
                 break;
             case "object":
                 if (!(json.isJsonObject())){
@@ -74,7 +73,7 @@ public class TypeValidator {
      * @param type
      * @return
      */
-    private static boolean validPrimitiveType( String type, JsonElement json) {
+    private boolean validPrimitiveType( String type, JsonElement json) {
         if (json.isJsonPrimitive()) {
             JsonPrimitive element = json.getAsJsonPrimitive();
             switch(type){
