@@ -83,7 +83,7 @@ public class ArrayValidator extends  BaseValidator{
     }
 
     @Override
-    public void validEnum(JsonElement json, JsonObject schema) {
+    protected void validEnum(JsonElement json, JsonObject schema) {
         for (JsonElement enumReq : schema.get("enum").getAsJsonArray()) {
             //first check if the json is an primitive
             if (enumReq.equals(json)) {
@@ -122,6 +122,7 @@ public class ArrayValidator extends  BaseValidator{
                 }
             }
             //adheres to section 5.3.4 of Json schema validation for uniqueItems
+            //TODO
             if (schema.has("type")&& valid){
                 valid = typeValidator.typeValidation(array, schema, valid);
             }

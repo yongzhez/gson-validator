@@ -16,15 +16,4 @@ public interface Validator {
      */
     boolean validator (JsonElement json, JsonObject schema);
 
-    void validEnum(JsonElement json, JsonObject schema);
-
-    void allOf(JsonElement json, JsonObject schema);
-
-    void anyOf(JsonElement json, JsonObject schema);
-
-    void oneOf(JsonElement json, JsonObject schema);
-
-    void not(JsonElement json, JsonObject schema);
-
-    void validType(JsonElement json, JsonObject schema);
 }

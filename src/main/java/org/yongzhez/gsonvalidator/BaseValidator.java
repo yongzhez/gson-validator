@@ -10,8 +10,9 @@ public abstract class BaseValidator implements Validator {
 
     protected boolean valid;
 
-    @Override
-    public void allOf(JsonElement json, JsonObject schema) {
+    protected abstract void validEnum(JsonElement json, JsonObject schema);
+
+    protected void allOf(JsonElement json, JsonObject schema) {
         for (JsonElement req : schema.get("allOf").getAsJsonArray()) {
             if (!this.validator(json, req.getAsJsonObject())){
                 this.valid = false;
@@ -20,8 +21,7 @@ public abstract class BaseValidator implements Validator {
         }
     }
 
-    @Override
-    public void anyOf(JsonElement json, JsonObject schema) {
+    protected void anyOf(JsonElement json, JsonObject schema) {
         for (JsonElement req : schema.get("anyOf").getAsJsonArray()) {
             if (this.validator(json, req.getAsJsonObject())){
                 this.valid = true;
@@ -32,8 +32,7 @@ public abstract class BaseValidator implements Validator {
 
     }
 
-    @Override
-    public void oneOf(JsonElement json, JsonObject schema) {
+    protected void oneOf(JsonElement json, JsonObject schema) {
         int count = 0;
 
         for (JsonElement req : schema.get("oneOf").getAsJsonArray()) {
@@ -47,16 +46,14 @@ public abstract class BaseValidator implements Validator {
         this.valid = count == 1;
     }
 
-    @Override
-    public void not(JsonElement json, JsonObject schema) {
+    protected void not(JsonElement json, JsonObject schema) {
         valid = !this.validator(json, schema.get("not").getAsJsonObject());
     }
 
-    @Override
-    public void validType(JsonElement json, JsonObject schema) {
+    protected void validType(JsonElement json, JsonObject schema) {
     }
 
-    public void setValid(boolean valid) {
+    protected void setValid(boolean valid) {
         this.valid = valid;
     }
 }

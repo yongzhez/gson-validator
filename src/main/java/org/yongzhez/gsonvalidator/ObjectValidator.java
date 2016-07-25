@@ -79,7 +79,7 @@ public class ObjectValidator extends  BaseValidator {
     }
 
     @Override
-    public void validEnum(JsonElement object, JsonObject schema) {
+    protected void validEnum(JsonElement object, JsonObject schema) {
         JsonObject jsonObject = object.getAsJsonObject();
         //adheres to section 5.5.1 of Json schema validation for enum
         for (JsonElement enumReq : schema.get("enum").getAsJsonArray()) {
