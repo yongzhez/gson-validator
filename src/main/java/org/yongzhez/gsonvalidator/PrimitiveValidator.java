@@ -11,10 +11,8 @@ import java.util.Map;
  */
 public class PrimitiveValidator extends BaseValidator {
 
-    private TypeValidator typeValidator;
-
     public PrimitiveValidator() {
-        this.typeValidator = new TypeValidator();
+        super();
     }
 
     /**

@@ -9,6 +9,11 @@ import com.google.gson.JsonObject;
 public abstract class BaseValidator implements Validator {
 
     protected boolean valid;
+    protected TypeValidator typeValidator;
+
+    public BaseValidator() {
+        this.typeValidator = new TypeValidator();
+    }
 
     /**
      * @param json

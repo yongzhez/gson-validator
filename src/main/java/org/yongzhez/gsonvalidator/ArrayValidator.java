@@ -9,10 +9,8 @@ import com.google.gson.JsonObject;
  */
 public class ArrayValidator extends BaseValidator {
 
-    private TypeValidator typeValidator;
-
     public ArrayValidator() {
-        this.typeValidator = new TypeValidator();
+        super();
     }
 
     /**

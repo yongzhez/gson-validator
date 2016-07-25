@@ -17,13 +17,13 @@ public class ObjectValidator extends BaseValidator {
 
     private PrimitiveValidator primitiveValidator;
     private ArrayValidator arrayValidator;
-    private TypeValidator typeValidator;
+
     private NullValidator nullValidator;
 
     public ObjectValidator() {
+        super();
         this.primitiveValidator = new PrimitiveValidator();
         this.arrayValidator = new ArrayValidator();
-        this.typeValidator = new TypeValidator();
         this.nullValidator = new NullValidator();
         this.valid = true;
     }
