@@ -48,6 +48,11 @@ public abstract class BaseValidator implements Validator {
     }
 
     @Override
+    public void not(JsonElement json, JsonObject schema) {
+        valid = !this.validator(json, schema.get("not").getAsJsonObject());
+    }
+
+    @Override
     public void validType(JsonElement json, JsonObject schema) {
     }
 

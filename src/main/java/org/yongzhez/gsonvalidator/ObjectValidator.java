@@ -126,6 +126,9 @@ public class ObjectValidator extends  BaseValidator {
                 if(schema.has("oneOf") && valid){
                     this.oneOf(json, schema);
                 }
+                if (schema.has("not") && valid){
+                    this.not(json, schema);
+                }
             }
 
 

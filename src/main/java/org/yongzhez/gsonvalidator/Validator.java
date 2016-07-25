@@ -24,5 +24,7 @@ public interface Validator {
 
     void oneOf(JsonElement json, JsonObject schema);
 
+    void not(JsonElement json, JsonObject schema);
+
     void validType(JsonElement json, JsonObject schema);
 }

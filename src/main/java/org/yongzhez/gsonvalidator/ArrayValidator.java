@@ -137,6 +137,9 @@ public class ArrayValidator extends  BaseValidator{
             if (schema.has("oneOf") && valid){
                 this.oneOf(array, schema);
             }
+            if (schema.has("not") && valid){
+                this.not(array, schema);
+            }
 
         }
 

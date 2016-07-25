@@ -111,6 +111,11 @@ public class TestValidator extends TestCase{
         this.testHelper(path.toAbsolutePath().toString());
     }
 
+    public void test_Not_Keyword(){
+        Path path = Paths.get("TestCases/not.json");
+        this.testHelper(path.toAbsolutePath().toString());
+    }
+
     /**
      * Taking in a file path, goes through every single one of the tests and runs
      * objectValidator against the file path.

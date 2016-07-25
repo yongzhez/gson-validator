@@ -193,6 +193,10 @@ public class PrimitiveValidator extends  BaseValidator {
             if (schema.has("oneOf") && valid){
                 this.oneOf(element, schema);
             }
+            if (schema.has("not") && valid){
+                this.not(element, schema);
+            }
+
 
         }
 
