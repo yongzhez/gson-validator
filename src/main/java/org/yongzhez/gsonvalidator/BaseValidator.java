@@ -10,20 +10,32 @@ public abstract class BaseValidator implements Validator {
 
     protected boolean valid;
 
+    /**
+     * @param json
+     * @param schema
+     */
     protected abstract void validEnum(JsonElement json, JsonObject schema);
 
+    /**
+     * @param json
+     * @param schema
+     */
     protected void allOf(JsonElement json, JsonObject schema) {
         for (JsonElement req : schema.get("allOf").getAsJsonArray()) {
-            if (!this.validator(json, req.getAsJsonObject())){
+            if (!this.validator(json, req.getAsJsonObject())) {
                 this.valid = false;
                 return;
             }
         }
     }
 
+    /**
+     * @param json
+     * @param schema
+     */
     protected void anyOf(JsonElement json, JsonObject schema) {
         for (JsonElement req : schema.get("anyOf").getAsJsonArray()) {
-            if (this.validator(json, req.getAsJsonObject())){
+            if (this.validator(json, req.getAsJsonObject())) {
                 this.valid = true;
                 return;
             }
@@ -32,25 +44,30 @@ public abstract class BaseValidator implements Validator {
 
     }
 
+    /**
+     * @param json
+     * @param schema
+     */
     protected void oneOf(JsonElement json, JsonObject schema) {
         int count = 0;
 
         for (JsonElement req : schema.get("oneOf").getAsJsonArray()) {
-            if (this.validator(json, req.getAsJsonObject())){
-                count ++;
+            if (this.validator(json, req.getAsJsonObject())) {
+                count++;
             }
-            if (count > 1){
+            if (count > 1) {
                 break;
             }
         }
         this.valid = count == 1;
     }
 
+    /**
+     * @param json
+     * @param schema
+     */
     protected void not(JsonElement json, JsonObject schema) {
         valid = !this.validator(json, schema.get("not").getAsJsonObject());
-    }
-
-    protected void validType(JsonElement json, JsonObject schema) {
     }
 
     protected void setValid(boolean valid) {

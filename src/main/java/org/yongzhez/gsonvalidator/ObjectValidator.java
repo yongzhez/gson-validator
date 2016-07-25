@@ -10,10 +10,10 @@ import java.util.Set;
 
 
 /**
- *gson-validator is a Java library that can be used to validate jsons
- *against json schemas.
+ * gson-validator is a Java library that can be used to validate jsons
+ * against json schemas.
  */
-public class ObjectValidator extends  BaseValidator {
+public class ObjectValidator extends BaseValidator {
 
     private PrimitiveValidator primitiveValidator;
     private ArrayValidator arrayValidator;
@@ -29,45 +29,46 @@ public class ObjectValidator extends  BaseValidator {
     }
 
     /**
-     * Takes in a jsonElement to be validated
-     * @param object
-     * @param schema
-     * @return
+     * Takes in a jsonElement to be validated for a json Object against
+     * maxProperties, minProperties, required, properties and additionalProperties
+     *
+     * @param object a jsonElement to be validated
+     * @param schema a schema containing the above mentioned keywords
      */
-    public void validateObject(JsonElement object, JsonObject schema){
+    public void validateObject(JsonElement object, JsonObject schema) {
 
         JsonObject jsonObject = object.getAsJsonObject();
         //adheres to section 5.4.1 of Json schema validation for maxProperties
-        if (schema.has("maxProperties")){
+        if (schema.has("maxProperties")) {
             Integer maxProperty = schema.get("maxProperties").getAsInt();
             Set<Map.Entry<String, JsonElement>> entry = jsonObject.entrySet();
-            if (entry.size() > maxProperty){
+            if (entry.size() > maxProperty) {
                 valid = false;
             }
         }
         //adheres to section 5.4.2 of Json schema validation for minProperties
-        if (schema.has("minProperties")){
+        if (schema.has("minProperties")) {
             Integer maxProperty = schema.get("minProperties").getAsInt();
-            Set<Map.Entry<String, JsonElement>>  entry = jsonObject.entrySet();
-            if (entry.size() < maxProperty){
+            Set<Map.Entry<String, JsonElement>> entry = jsonObject.entrySet();
+            if (entry.size() < maxProperty) {
                 valid = false;
             }
         }
 
-        if (schema.has("required")){
+        if (schema.has("required")) {
             JsonArray requiredProperties = schema.get("required").getAsJsonArray();
-            for (int i = 0; i < requiredProperties.size(); i ++){
-                if (!(jsonObject.has(requiredProperties.get(i).getAsString()))){
+            for (int i = 0; i < requiredProperties.size(); i++) {
+                if (!(jsonObject.has(requiredProperties.get(i).getAsString()))) {
                     valid = false;
                 }
             }
         }
-        if (schema.has("properties")){
-            for (Map.Entry<String, JsonElement> schemaEntry: schema.get("properties").getAsJsonObject().entrySet()){
-                if (!valid){
+        if (schema.has("properties")) {
+            for (Map.Entry<String, JsonElement> schemaEntry : schema.get("properties").getAsJsonObject().entrySet()) {
+                if (!valid) {
                     break;
                 }
-                if (schemaEntry.getValue().isJsonObject() && jsonObject.has(schemaEntry.getKey())){
+                if (schemaEntry.getValue().isJsonObject() && jsonObject.has(schemaEntry.getKey())) {
                     valid = this.validator(jsonObject.get(schemaEntry.getKey()), schemaEntry.getValue().getAsJsonObject());
                 }
             }
@@ -94,8 +95,7 @@ public class ObjectValidator extends  BaseValidator {
                         }
                     }
                 }
-            }
-            else{
+            } else {
                 valid = false;
             }
         }
@@ -103,30 +103,28 @@ public class ObjectValidator extends  BaseValidator {
     }
 
     @Override
-    public boolean validator(JsonElement json, JsonObject schema){
+    public boolean validator(JsonElement json, JsonObject schema) {
 
-        try{
-            if (json.isJsonObject()){
-                if (schema.has("required") || schema.has("maxProperties") || schema.has("minProperties")
-                        || schema.has("properties")){
-                    this.validateObject(json, schema);
-                }
-                if (schema.has("type") && valid){
+        try {
+            if (json.isJsonObject()) {
+                this.validateObject(json, schema);
+
+                if (schema.has("type") && valid) {
                     this.valid = typeValidator.typeValidation(json, schema, valid);
                 }
-                if (schema.has("enum") && valid){
+                if (schema.has("enum") && valid) {
                     this.validEnum(json, schema);
                 }
-                if (schema.has("allOf") && valid){
+                if (schema.has("allOf") && valid) {
                     this.allOf(json, schema);
                 }
-                if (schema.has("anyOf") && valid){
+                if (schema.has("anyOf") && valid) {
                     this.anyOf(json, schema);
                 }
-                if(schema.has("oneOf") && valid){
+                if (schema.has("oneOf") && valid) {
                     this.oneOf(json, schema);
                 }
-                if (schema.has("not") && valid){
+                if (schema.has("not") && valid) {
                     this.not(json, schema);
                 }
             }
@@ -145,7 +143,7 @@ public class ObjectValidator extends  BaseValidator {
             this.valid = true;
 
             return result;
-        }catch (JSONException exception){
+        } catch (JSONException exception) {
             return false;
         }
 
