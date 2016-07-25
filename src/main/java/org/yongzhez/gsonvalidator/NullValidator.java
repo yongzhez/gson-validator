@@ -8,18 +8,11 @@ import com.google.gson.JsonObject;
  */
 public class NullValidator extends BaseValidator {
 
-    private boolean valid;
-    private TypeValidator typeValidator;
-
     public NullValidator() {
-        this.typeValidator = new TypeValidator();
+        super();
         this.valid = true;
     }
-
-    public void setValid(boolean valid) {
-        this.valid = valid;
-    }
-
+    
     @Override
     public boolean validator(JsonElement json, JsonObject schema) {
         if (json.isJsonNull()){
