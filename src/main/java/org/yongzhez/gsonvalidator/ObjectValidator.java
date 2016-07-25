@@ -3,11 +3,8 @@ package org.yongzhez.gsonvalidator;
 import com.google.gson.*;
 import org.json.JSONException;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 
 /**
  * gson-validator is a Java library that can be used to validate jsons

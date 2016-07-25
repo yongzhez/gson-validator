@@ -1,6 +1,5 @@
 package org.yongzhez.gsonvalidator;
 
-
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.nio.file.Path;

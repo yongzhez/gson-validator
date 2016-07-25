@@ -12,7 +12,7 @@ public class NullValidator extends BaseValidator {
         super();
         this.valid = true;
     }
-    
+
     @Override
     public boolean validator(JsonElement json, JsonObject schema) {
         if (json.isJsonNull()){
