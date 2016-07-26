@@ -19,7 +19,15 @@ public abstract class BaseValidator implements Validator {
      * @param json
      * @param schema
      */
-    protected abstract void validEnum(JsonElement json, JsonObject schema);
+    protected void validEnum(JsonElement json, JsonObject schema){
+        for (JsonElement enumReq : schema.get("enum").getAsJsonArray()) {
+            if (enumReq.equals(json)) {
+                valid = true;
+                return;
+            }
+        }
+        valid = false;
+    }
 
     /**
      * @param json

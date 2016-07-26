@@ -15,6 +15,10 @@ public class NullValidator extends BaseValidator {
 
     @Override
     public boolean validator(JsonElement json, JsonObject schema) {
+        /*instead of writing in the PrimitiveValidator class, it made
+        more sense to place this in a class of it's own for readability
+        since it has a validation specific to it
+         */
         if (json.isJsonNull()){
             if (schema.has("enum")){
                 this.validEnum(json, schema);
@@ -29,18 +33,5 @@ public class NullValidator extends BaseValidator {
 
         return result;
 
-    }
-
-    @Override
-    protected void validEnum(JsonElement json, JsonObject schema) {
-        for (JsonElement enumReq : schema.get("enum").getAsJsonArray()) {
-            //first check if the json is an primitive
-            if (enumReq.equals(json)) {
-                valid =  true;
-                return;
-            }
-        }
-
-        valid = false;
     }
 }

@@ -14,7 +14,6 @@ public class ObjectValidator extends BaseValidator {
 
     private PrimitiveValidator primitiveValidator;
     private ArrayValidator arrayValidator;
-
     private NullValidator nullValidator;
 
     public ObjectValidator() {

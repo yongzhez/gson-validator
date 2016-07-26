@@ -155,19 +155,6 @@ public class PrimitiveValidator extends BaseValidator {
     }
 
     @Override
-    protected void validEnum(JsonElement json, JsonObject schema) {
-        for (JsonElement enumReq : schema.get("enum").getAsJsonArray()) {
-            //first check if the json is an primitive
-            if (enumReq.equals(json)) {
-                valid = true;
-                return;
-            }
-        }
-
-        valid = false;
-    }
-
-    @Override
     public boolean validator(JsonElement json, JsonObject schema) {
         if (json.isJsonPrimitive()) {
             JsonPrimitive element = json.getAsJsonPrimitive();
@@ -196,8 +183,6 @@ public class PrimitiveValidator extends BaseValidator {
             if (schema.has("not") && valid) {
                 this.not(element, schema);
             }
-
-
         }
 
         boolean result = valid;

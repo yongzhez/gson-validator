@@ -82,18 +82,6 @@ public class ArrayValidator extends BaseValidator {
     }
 
     @Override
-    protected void validEnum(JsonElement json, JsonObject schema) {
-        for (JsonElement enumReq : schema.get("enum").getAsJsonArray()) {
-            //first check if the json is an primitive
-            if (enumReq.equals(json)) {
-                valid = true;
-                return;
-            }
-        }
-        valid = false;
-    }
-
-    @Override
     public boolean validator(JsonElement array, JsonObject schema) {
 
         if (array.isJsonArray()) {
